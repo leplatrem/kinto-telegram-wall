@@ -15,11 +15,15 @@ SERVER_URL = os.getenv("SERVER_URL", "https://kinto.dev.mozaws.net/v1")
 KINTO_AUTH = os.getenv("SERVER_AUTH", "botuser:secret")
 BUCKET = os.getenv("BUCKET", "kintobot")
 COLLECTION = os.getenv("COLLECTION", "wall")
-
 DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH", ".")
-DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
 
+DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
 RECORD_PERMISSIONS = {"read": ["system.Everyone"]}
+
+mimetypes.add_type("audio/ogg", ".oga")
+mimetypes.add_type("image/ogg", ".ogg")
+mimetypes.add_type("image/webp", ".webp")
+
 
 
 kinto = Kinto(server_url=SERVER_URL, auth=tuple(KINTO_AUTH.split(":")))
@@ -52,15 +56,22 @@ def download_from_telegram(attachment):
 
     filename = attachment.get("file_name")
     if not filename:
-        fileinfo = bot.getFile(file_id)
-        filename = os.path.basename(fileinfo["file_path"])
+        filepath = attachment.get("file_path")
+        if not filename:
+            fileinfo = bot.getFile(file_id)
+            filepath = fileinfo["file_path"]
+        filename = os.path.basename(filepath)
 
     mimetype = attachment.get("mime_type")
     if not mimetype:
         mimetype, _ = mimetypes.guess_type(filename)
 
-    extension = mimetypes.guess_extension(mimetype)
-    destination = os.path.join(DOWNLOAD_PATH, file_id) + extension
+    if mimetype:
+        extension = mimetypes.guess_extension(mimetype)
+    elif "." in filename:
+        extension = "." + filename.rsplit(".", 1)[-1]
+
+    destination = os.path.join(DOWNLOAD_PATH, file_id) + (extension or '')
     bot.downloadFile(file_id, destination)
     print("Downloaded %s" % destination)
 
