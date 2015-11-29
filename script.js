@@ -53,6 +53,16 @@ function main() {
         entry.querySelector(".attachment").setAttribute("href", record.attachment.location);
         entry.querySelector(".attachment img").setAttribute("src", record.attachment.location);
       }
+      else if (/^audio/.test(record.attachment.mimetype)) {
+        var tpl = document.getElementById("audio-tpl");
+        entry = tpl.content.cloneNode(true);
+        entry.querySelector(".attachment").setAttribute("src", record.attachment.location);
+      }
+      else if (/^video/.test(record.attachment.mimetype)) {
+        var tpl = document.getElementById("video-tpl");
+        entry = tpl.content.cloneNode(true);
+        entry.querySelector(".attachment").setAttribute("src", record.attachment.location);
+      }
       else {
         var tpl = document.getElementById("attachment-tpl");
         entry = tpl.content.cloneNode(true);
