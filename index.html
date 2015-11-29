@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8"/>
+  <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="error"></div>
+    <div id="wall" class="ui feed"></div>
+    <template id="text-tpl">
+      <div class="event">
+        <div class="label">
+          <img src="http://semantic-ui.com/images/avatar/small/helen.jpg">
+        </div>
+        <div class="content">
+          <div class="summary">
+            <a class="author"></a> posted a message
+            <div class="date"></div>
+          </div>
+          <div class="extra text msg"></div>
+        </div>
+      </div>
+    </template>
+    <template id="attachment-tpl">
+      <div class="event">
+        <div class="label">
+          <img src="http://semantic-ui.com/images/avatar/small/jenny.jpg">
+        </div>
+        <div class="content">
+          <div class="summary">
+            <a class="author"></a> posted a file
+            <div class="date"></div>
+          </div>
+          <div class="extra text">
+            <a class="download" href="">Download</a>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template id="image-tpl">
+      <div class="event">
+        <div class="label">
+          <img src="http://semantic-ui.com/images/avatar/small/joe.jpg">
+        </div>
+        <div class="content">
+          <div class="summary">
+            <a class="author"></a> posted a photo
+            <div class="date"></div>
+          </div>
+          <div class="extra images">
+            <a class="attachment" href=""><img  src=""/></a>
+          </div>
+        </div>
+      </div>
+    </template>
+  </body>
+</html>
