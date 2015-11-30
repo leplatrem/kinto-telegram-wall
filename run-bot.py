@@ -25,7 +25,6 @@ mimetypes.add_type("image/ogg", ".ogg")
 mimetypes.add_type("image/webp", ".webp")
 
 
-
 kinto = Kinto(server_url=SERVER_URL, auth=tuple(KINTO_AUTH.split(":")))
 
 
