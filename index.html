@@ -2,92 +2,39 @@
 <html>
   <meta charset="utf-8"/>
   <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css" />
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-    <script type="text/javascript" src="https://webpjs.appspot.com/js/webpjs-0.0.2.min.js"></script>
     <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
     <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/intuitive" type="text/css"/>
+    <link rel="stylesheet" media="screen" href="http://fonts.googleapis.com/css?family=Ubuntu" type="text/css"/>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="error"></div>
-    <div id="wall" class="ui feed"></div>
+    <div id="wall"></div>
+    <div id="instructions">Send your message ∙ picture ∙ sound ∙ video to <strong>@KintoBot</strong> on <em>Telegram</em></div>
+
     <template id="text-tpl">
-      <div class="event">
-        <div class="label">
-          <img src="http://semantic-ui.com/images/avatar/small/helen.jpg">
-        </div>
-        <div class="content">
-          <div class="summary">
-            <a class="author"></a> posted a message
-            <div class="date"></div>
-          </div>
-          <div class="extra text msg"></div>
-        </div>
-      </div>
-    </template>
-    <template id="attachment-tpl">
-      <div class="event">
-        <div class="label">
-          <img src="http://semantic-ui.com/images/avatar/small/jenny.jpg">
-        </div>
-        <div class="content">
-          <div class="summary">
-            <a class="author"></a> posted a file
-            <div class="date"></div>
-          </div>
-          <div class="extra text">
-            <a class="download" href=""><i class="attach icon"></i> Download</a>
-          </div>
-        </div>
+      <div class="content">
+        <div class="author"></div>
+        <div class="msg"></div>
       </div>
     </template>
     <template id="image-tpl">
-      <div class="event">
-        <div class="label">
-          <img src="http://semantic-ui.com/images/avatar/small/joe.jpg">
-        </div>
-        <div class="content">
-          <div class="summary">
-            <a class="author"></a> posted a photo
-            <div class="date"></div>
-          </div>
-          <div class="extra images">
-            <a class="attachment" href=""><img  src=""/></a>
-          </div>
-        </div>
+      <div class="content">
+        <div class="author"></div>
+        <img class="attachment"/>
       </div>
     </template>
     <template id="audio-tpl">
-      <div class="event">
-        <div class="label">
-          <img src="http://semantic-ui.com/images/avatar/small/justen.jpg">
-        </div>
-        <div class="content">
-          <div class="summary">
-            <a class="author"></a> posted a sound
-            <div class="date"></div>
-          </div>
-          <div class="extra images">
-            <audio class="attachment" src="" controls></audio>
-          </div>
-        </div>
+      <div class="content">
+        <div class="author"></div>
+        <audio class="attachment" src="" preload autoplay="true"/>
       </div>
     </template>
     <template id="video-tpl">
-      <div class="event">
-        <div class="label">
-          <img src="http://semantic-ui.com/images/avatar/small/elliot.jpg">
-        </div>
-        <div class="content">
-          <div class="summary">
-            <a class="author"></a> posted a video
-            <div class="date"></div>
-          </div>
-          <div class="extra images">
-            <video class="attachment" src="" controls></video>
-          </div>
-        </div>
+      <div class="content">
+        <div class="author"></div>
+        <video class="attachment" src="" autoplay="true" loop="true"/>
       </div>
     </template>
   </body>

@@ -9,10 +9,13 @@ function main() {
   var collection = "wall";
   // Pusher app key
   var pusher_key = "ccbbb57423e56f4db774";
-  // Max number of records
+  // Max initial number of records
   var limit = 100;
+  // Refresh rate
+  var refreshRate = 10000;
 
-  var wall = document.querySelector("#wall");
+  var contents = [];
+  var queue = [];
 
   // Fetch from kinto.
   var url = `${server}/buckets/${bucket}/collections/${collection}/records?_limit=${limit}`;
@@ -21,15 +24,12 @@ function main() {
      return response.json();
    })
    .then(function (result) {
-     wall.innerHTML = "";
-     result.data.forEach(function(record) {
-       wall.appendChild(renderRecord(record));
-     });
+     contents = result.data;
+     showContent(contents[0]);
    })
    .catch(function (error) {
      document.getElementById("error").textContent = error.toString();
    });
-
 
   // Live changes.
   var pusher = new Pusher(pusher_key, {
@@ -38,46 +38,57 @@ function main() {
   var channelName = `${bucket}-${collection}-record`;
   var channel = pusher.subscribe(channelName);
   channel.bind('create', function(data) {
-    data.forEach(function (change) {
-      wall.insertBefore(renderRecord(change.new), wall.firstChild);
-    });
+    var newrecords = changes.map(function (change) { return change.new; });
+    contents = newrecords.concat(contents);
+    queue = newrecords.concat(queue);
   });
 
 
-  function renderRecord(record) {
+  function showContent(record) {
     var entry;
-    if (record.attachment) {
-      if (/^image/.test(record.attachment.mimetype)) {
-        var tpl = document.getElementById("image-tpl");
-        entry = tpl.content.cloneNode(true);
-        entry.querySelector(".attachment").setAttribute("href", record.attachment.location);
-        entry.querySelector(".attachment img").setAttribute("src", record.attachment.location);
+    var isURL = /^http(.*)(gif|jpg|jpeg)$/.test(record.text);
+    if (isURL || record.attachment) {
+      var template, location;
+      if (isURL || /^image/.test(record.attachment.mimetype)) {
+        template = "image-tpl";
+        location = isURL ? record.text : record.attachment.location;
       }
       else if (/^audio/.test(record.attachment.mimetype)) {
-        var tpl = document.getElementById("audio-tpl");
-        entry = tpl.content.cloneNode(true);
-        entry.querySelector(".attachment").setAttribute("src", record.attachment.location);
+        template = "audio-tpl";
+        location = record.attachment.location;
       }
       else if (/^video/.test(record.attachment.mimetype)) {
-        var tpl = document.getElementById("video-tpl");
-        entry = tpl.content.cloneNode(true);
-        entry.querySelector(".attachment").setAttribute("src", record.attachment.location);
+        template = "video-tpl";
+        location = record.attachment.location;
       }
-      else {
-        var tpl = document.getElementById("attachment-tpl");
-        entry = tpl.content.cloneNode(true);
-        entry.querySelector(".download").setAttribute("href", record.attachment.location);
-      }
+      var tpl = document.getElementById(template);
+      entry = tpl.content.cloneNode(true);
+      entry.querySelector(".attachment").setAttribute("src", location);
     }
     else {
       var tpl = document.getElementById("text-tpl");
       entry = tpl.content.cloneNode(true);
       entry.querySelector(".msg").textContent = record.text;
     }
-
-    entry.querySelector(".date").textContent = moment(record.date, "X").fromNow();
     entry.querySelector(".author").textContent = record.from.first_name;
-    return entry;
+
+    // Replace current with new one.
+    var wall = document.querySelector("#wall");
+    wall.innerHTML = "";
+    wall.appendChild(entry);
+
+    // Consume queue.
+    if (queue.length > 0) {
+      record = queue[0];
+      queue = queue.slice(1);
+    }
+    // Restart with whole list when done.
+    if (queue.length === 0) {
+      queue = contents;
+    }
+
+    // Auto-refresh.
+    setTimeout(showContent.bind(undefined, record), refreshRate);
   }
 }
 
