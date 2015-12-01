@@ -19,6 +19,8 @@ DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH", ".")
 
 DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
 RECORD_PERMISSIONS = {"read": ["system.Everyone"]}
+THUMB_UP = u'\U0001f44d'
+
 
 mimetypes.add_type("audio/ogg", ".oga")
 mimetypes.add_type("image/ogg", ".ogg")
@@ -82,6 +84,15 @@ def handle(msg):
 
     msg_type, chat_type, chat_id = telepot.glance2(msg)
 
+    if msg.get("text", "").startwith("/"):
+        welcome = (
+            "Hello!\n"
+            "This project is open source!\n"
+            "Check out https://github.com/leplatrem/kinto-telegram-wall#readme"
+        )
+        bot.sendMessage(chat_id, welcome)
+        return
+
     if msg_type not in DOWNLOAD_TYPES:
         kinto_create_record(msg)
     else:
@@ -92,6 +103,7 @@ def handle(msg):
         tmpfile, filename, mimetype = download_from_telegram(attachment)
         kinto_create_attachment(msg, tmpfile, filename, mimetype)
         os.remove(tmpfile)
+    bot.sendMessage(chat_id, THUMB_UP)
 
 
 if __name__ == "__main__":
