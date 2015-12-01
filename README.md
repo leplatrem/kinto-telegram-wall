@@ -70,6 +70,16 @@ Go talk to `@BotFather` to create a new bot and obtain a token:
 
 ![screenshot-botfather](screenshot-botfather.png)
 
+Install the python libraries:
+
+```shell
+$ sudo apt-get install python-dev python-virtualenv
+
+$ virtualenv venv/
+$ source venv/bin/activate
+$ pip install telepot kinto-client
+```
+
 The Kinto bot reads the configuration from environment variables. You can use a shell
 script to set them:
 
