@@ -87,7 +87,8 @@ script to set them:
 # config.env
 export TOKEN=the-token-the-botfather-gave
 export SERVER_URL=https://kinto.yourdomain.com/v1")
-export KINTO_AUTH=botuser:some-secret-password
+export COLLECTION=myparty
+export KINTO_AUTH=botuser:some-secret-password-of-your-choice
 ```
 
 And then run it:
