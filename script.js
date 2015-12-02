@@ -38,7 +38,7 @@ function main() {
   var channelName = `${bucket}-${collection}-record`;
   var channel = pusher.subscribe(channelName);
   channel.bind('create', function(data) {
-    var newrecords = changes.map(function (change) { return change.new; });
+    var newrecords = data.map(function (change) { return change.new; });
     contents = newrecords.concat(contents);
     queue = newrecords.concat(queue);
   });
@@ -61,9 +61,11 @@ function main() {
         template = "video-tpl";
         location = record.attachment.location;
       }
-      var tpl = document.getElementById(template);
-      entry = tpl.content.cloneNode(true);
-      entry.querySelector(".attachment").setAttribute("src", location);
+      if (template) {
+        var tpl = document.getElementById(template);
+        entry = tpl.content.cloneNode(true);
+        entry.querySelector(".attachment").setAttribute("src", location);
+      }
     }
     else {
       var tpl = document.getElementById("text-tpl");
