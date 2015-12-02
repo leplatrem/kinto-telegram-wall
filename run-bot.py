@@ -35,18 +35,18 @@ def kinto_init():
     kinto.create_collection(COLLECTION, bucket=BUCKET, safe=False)
 
 
-def kinto_create_record(msg):
-    kinto.create_record(data=msg, permissions=RECORD_PERMISSIONS,
+def kinto_create_record(record):
+    kinto.create_record(data=record, permissions=RECORD_PERMISSIONS,
                         collection=COLLECTION, bucket=BUCKET)
 
 
-def kinto_create_attachment(msg, tmpfile, filename, mimetype):
+def kinto_create_attachment(record, tmpfile, filename, mimetype):
     record_id = str(uuid.uuid4())
     endpoint = kinto.endpoints.get("record", id=record_id, bucket=BUCKET, collection=COLLECTION)
     endpoint += "/attachment"
 
     files = [("attachment", (filename, open(tmpfile, "rb"), mimetype))]
-    payload = {"data": json.dumps(msg), "permissions": json.dumps(RECORD_PERMISSIONS)}
+    payload = {"data": json.dumps(record), "permissions": json.dumps(RECORD_PERMISSIONS)}
     response = requests.post(SERVER_URL + endpoint, data=payload, files=files, auth=kinto.session.auth)
     response.raise_for_status()
     pprint.pprint(response.json())
@@ -84,7 +84,7 @@ def handle(msg):
 
     msg_type, chat_type, chat_id = telepot.glance2(msg)
 
-    if msg.get("text", "").startwith("/"):
+    if msg.get("text", "").startswith("/"):
         welcome = (
             "Hello!\n"
             "This project is open source!\n"
@@ -93,15 +93,19 @@ def handle(msg):
         bot.sendMessage(chat_id, welcome)
         return
 
-    if msg_type not in DOWNLOAD_TYPES:
-        kinto_create_record(msg)
-    else:
-        attachment = msg.pop(msg_type)
-        if msg_type == "photo":
-            attachment = attachment[-1]
+    # Attributes sent to Kinto.
+    record = {"date": msg["date"],
+              "from": {"first_name": msg["from"]["first_name"]}}
+    record[msg_type] = content = msg[msg_type]
 
-        tmpfile, filename, mimetype = download_from_telegram(attachment)
-        kinto_create_attachment(msg, tmpfile, filename, mimetype)
+    if msg_type not in DOWNLOAD_TYPES:
+        kinto_create_record(record)
+    else:
+        if msg_type == "photo":
+            content = content[-1]
+
+        tmpfile, filename, mimetype = download_from_telegram(content)
+        kinto_create_attachment(record, tmpfile, filename, mimetype)
         os.remove(tmpfile)
     bot.sendMessage(chat_id, THUMB_UP)
 
