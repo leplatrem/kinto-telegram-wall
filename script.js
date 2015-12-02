@@ -48,24 +48,25 @@ function main() {
     var entry;
     var isURL = /^http(.*)(gif|jpg|jpeg)$/.test(record.text);
     if (isURL || record.attachment) {
-      var template, location;
+      var location = isURL ? record.text : record.attachment.location;
+      var attr = "src";
+      var template;
       if (isURL || /^image/.test(record.attachment.mimetype)) {
         template = "image-tpl";
-        location = isURL ? record.text : record.attachment.location;
       }
       else if (/^audio/.test(record.attachment.mimetype)) {
         template = "audio-tpl";
-        location = record.attachment.location;
       }
       else if (/^video/.test(record.attachment.mimetype)) {
         template = "video-tpl";
-        location = record.attachment.location;
       }
-      if (template) {
-        var tpl = document.getElementById(template);
-        entry = tpl.content.cloneNode(true);
-        entry.querySelector(".attachment").setAttribute("src", location);
+      else {
+        template = "file-tpl";
+        attr = "href";
       }
+      var tpl = document.getElementById(template);
+      entry = tpl.content.cloneNode(true);
+      entry.querySelector(".attachment").setAttribute(attr, location);
     }
     else {
       var tpl = document.getElementById("text-tpl");

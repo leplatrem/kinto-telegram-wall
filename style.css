@@ -16,6 +16,7 @@ body {
   overflow: hidden;
 }
 
+
 .content {
   display: flex;
   flex-direction: column;
@@ -26,10 +27,15 @@ body {
   min-height: 700px;
 }
 
-  .content img {
+  .content img, .content video {
     flex-grow: 1;
     min-height: 700px;
+    min-width: 700px;
     object-fit: cover;
+  }
+
+  .content a {
+    text-decoration: none;
   }
 
   .content .msg {
@@ -40,6 +46,7 @@ body {
   .content .author {
     color: rgba(255, 255, 255, 0.8);
   }
+
 
 #instructions {
   position: fixed;
@@ -54,4 +61,17 @@ body {
   #instructions strong, #instructions em {
     font-size: 1.2em;
     color: white;
+  }
+
+
+.icon {
+  font-style: normal;
+  font-size: 2em;
+  color: white;
+}
+  .icon.audio::after {
+    content: "🔊";
+  }
+  .icon.file::after {
+    content: "📎";
   }
