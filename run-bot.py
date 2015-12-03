@@ -12,6 +12,9 @@ import telepot
 
 TOKEN = os.getenv("TOKEN")
 SERVER_URL = os.getenv("SERVER_URL", "https://kinto.dev.mozaws.net/v1")
+WALL_URL = os.getenv(
+    "WALL_URL",
+    "http://leplatrem.github.io/kinto-telegram-wall/")
 KINTO_AUTH = os.getenv("SERVER_AUTH", "botuser:secret")
 BUCKET = os.getenv("BUCKET", "kintobot")
 COLLECTION = os.getenv("COLLECTION", "wall")
@@ -87,9 +90,11 @@ def handle(msg):
     if msg.get("text", "").startswith("/"):
         welcome = (
             "Hello!\n"
+            "Any message, picture, sound, video sent to me will be displayed "
+            "live on {wall_url}\n"
             "This project is open source!\n"
             "Check out https://github.com/leplatrem/kinto-telegram-wall#readme"
-        )
+        ).format(wall_url=WALL_URL)
         bot.sendMessage(chat_id, welcome)
         return
 

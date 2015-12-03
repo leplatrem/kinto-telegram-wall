@@ -109,6 +109,7 @@ If you run your own *Kinto* server, add:
 
 ```shell
 export SERVER_URL=https://kinto.yourdomain.com/v1
+export WALL_URL=https://telegram-wall.yourdomain.com/
 ```
 
 And then run it:
