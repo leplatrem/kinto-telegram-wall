@@ -125,6 +125,16 @@ Listening...
 > In this demo, the permissions are set to allow everyone to see the posts.
 > Adjust the value in the bot source code to suit your usecase.
 
+Since Telegram sends stickers in *WebP* and videos in *3gpp*, some contents may
+not show up in some browsers. The bot can convert the media on the fly when
+``ffmpeg`` command is available locally.
+
+```shell
+$ sudo apt-get install ffmpeg
+```
+
+The command can be customized via environment variable. See ``run-bot.py`` source code.
+
 
 ### Host the Webpage
 
