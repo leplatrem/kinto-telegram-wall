@@ -5,20 +5,22 @@ import uuid
 import time
 import pprint
 
-from kinto_client import Client as Kinto
+from kinto_client import Client as Kinto, exceptions as kinto_exceptions
 import requests
 import telepot
 
 
 TOKEN = os.getenv("TOKEN")
 SERVER_URL = os.getenv("SERVER_URL", "https://kinto.dev.mozaws.net/v1")
-KINTO_AUTH = os.getenv("SERVER_AUTH", "botuser:secret")
+SERVER_AUTH = os.getenv("SERVER_AUTH", "botuser:secret")
 BUCKET = os.getenv("BUCKET", "kintobot")
 COLLECTION = os.getenv("COLLECTION", "wall")
 DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH", ".")
 
 DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
-RECORD_PERMISSIONS = {"read": ["system.Everyone"]}
+BUCKET_PERMISSIONS = {"read": ["system.Everyone"],
+                      "collection:create": ["system.Authenticated"]}
+RECORD_PERMISSIONS = {}
 THUMB_UP = u'\U0001f44d'
 
 
@@ -27,12 +29,15 @@ mimetypes.add_type("image/ogg", ".ogg")
 mimetypes.add_type("image/webp", ".webp")
 
 
-kinto = Kinto(server_url=SERVER_URL, auth=tuple(KINTO_AUTH.split(":")))
-
-
 def kinto_init():
-    kinto.create_bucket(BUCKET, safe=False)
-    kinto.create_collection(COLLECTION, bucket=BUCKET, safe=False)
+    try:
+        kinto.get_bucket(BUCKET)
+    except kinto_exceptions.BucketNotFound:
+        kinto.create_bucket(BUCKET, permissions=BUCKET_PERMISSIONS)
+    try:
+        kinto.get_collection(COLLECTION, bucket=BUCKET)
+    except kinto_exceptions.KintoException:
+        kinto.create_collection(COLLECTION, bucket=BUCKET)
 
 
 def kinto_create_record(record):
@@ -112,6 +117,9 @@ def handle(msg):
 
 
 if __name__ == "__main__":
+    auth = tuple(SERVER_AUTH.split(":"))
+    print("Connect to %s with user %s" % (SERVER_URL, auth[0]))
+    kinto = Kinto(server_url=SERVER_URL, auth=auth)
     kinto_init()
 
     bot = telepot.Bot(TOKEN)
