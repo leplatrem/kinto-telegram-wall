@@ -1,6 +1,6 @@
 function main() {
   // Kinto server url
-  var server = "http://95.85.60.144:8888/v1";
+  var server = "https://kinto.dev.mozaws.net/v1";
   // Basic Authentication
   var headers = {};
   // Bucket id
@@ -8,7 +8,7 @@ function main() {
   // Collection id
   var collection = "wall";
   // Pusher app key
-  var pusher_key = "ccbbb57423e56f4db774";
+  var pusher_key = "01a9feaaf9ebb120d1a6";
   // Max initial number of records
   var limit = 100;
   // Refresh rate
