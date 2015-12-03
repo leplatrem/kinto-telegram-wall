@@ -1,15 +1,18 @@
 # Kinto Telegram Wall
 
-**Publish on the Web from Telegram using Kinto**
+**Live publication on a Web page from Telegram, using Kinto**
 
-## Demo
-
-The demo bot is called ``@KintoBot``. When you post a message, a photo or a
-sound, it is posted on this Webpage (*with live refresh*):
-http://leplatrem.github.io/kinto-telegram-wall/.
+When you post a message, a photo, a video, a sticker or a sound it appears on a
+Webpage, with live refresh! This is a lot of fun at parties!
 
 ![screenshot-telegram](screenshot-telegram.png)
 ![screenshot-web](screenshot-web.png)
+
+
+## Demo
+
+We run a demo, the bot is called ``@KintoBot``, search for it in Telegram.
+The content are then shown publicly here: http://leplatrem.github.io/kinto-telegram-wall/.
 
 
 ## What is this ?
@@ -87,8 +90,8 @@ script to set them:
 # config.env
 export TOKEN=the-token-the-botfather-gave
 export SERVER_URL=https://kinto.yourdomain.com/v1
+export SERVER_AUTH=botuser:some-secret-password-of-your-choice
 export COLLECTION=myparty
-export KINTO_AUTH=botuser:some-secret-password-of-your-choice
 ```
 
 And then run it:

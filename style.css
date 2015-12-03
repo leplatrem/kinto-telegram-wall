@@ -1,7 +1,77 @@
-body {
-  margin: 1em;
+html, body {
+  height: 100%;
+  width: 100%;
 }
 
-.ui.feed .event video {
-  max-height: 200px;
+body {
+  margin: 0;
+  padding: 0;
+
+  color: white;
+  font-size: 3em;
+  font-family: 'Ubuntu';
+  background-color: black;
+
+  max-height: 100%;
+  overflow: hidden;
 }
+
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 700px;
+}
+
+  .content img, .content video {
+    flex-grow: 1;
+    min-height: 700px;
+    min-width: 700px;
+    object-fit: cover;
+  }
+
+  .content a {
+    text-decoration: none;
+  }
+
+  .content .msg {
+    font-size: 2.5em;
+    font-family: 'IntuitiveRegular';
+  }
+
+  .content .author {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+
+#instructions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+  #instructions strong, #instructions em {
+    font-size: 1.2em;
+    color: white;
+  }
+
+
+.icon {
+  font-style: normal;
+  font-size: 2em;
+  color: white;
+}
+  .icon.audio::after {
+    content: "🔊";
+  }
+  .icon.file::after {
+    content: "📎";
+  }
