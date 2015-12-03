@@ -59,21 +59,31 @@ Code and the Javascript around 80.
 
 ## How to run it yourself ?
 
-### Run Kinto
+### Kinto server
 
-Get yourself a Kinto running, and configured with plugins:
+At Mozilla, we run a demo server of Kinto, and the scripts in this repository are using
+it by default.
 
-* Follow the instructions from the [Kinto documentation](http://kinto.readthedocs.org/)
-* Follow the instructions to enable the [Kinto Attachment](https://github.com/Kinto/kinto-attachment/) plugin (*Caution: wet paint*)
-* (*optional*) Follow the instructions to enable the [Pusher plugin](https://github.com/leplatrem/cliquet-pusher/tree/master/demo) for live refresh
+But **it is flushed everyday at 7:00 AM UTC**. In the case of a party, it can
+sometimes become a desired feature :)
+
+However, if you want to get your own *Kinto* running, you'll have to:
+
+* Run a basic Kinto server using the instructions in the [Kinto documentation](http://kinto.readthedocs.org/)
+* Follow the instructions to enable the [Kinto Attachment](https://github.com/Kinto/kinto-attachment/) plugin
+* Follow the instructions to enable the [Pusher plugin](https://github.com/leplatrem/cliquet-pusher/tree/master/demo) for live refresh
+
 
 ### Run the bot
 
-Go talk to `@BotFather` to create a new bot and obtain a token:
+Go talk to `@BotFather` to create a new bot on Telegram server. You'll obtain a token:
 
 ![screenshot-botfather](screenshot-botfather.png)
 
-Install the python libraries:
+Now, the bot — a Python program — will keep running in order to receive the messages and transmit
+them to Kinto.
+
+First, install the required python libraries:
 
 ```shell
 $ sudo apt-get install python-dev python-virtualenv
@@ -83,15 +93,22 @@ $ source venv/bin/activate
 $ pip install telepot kinto-client
 ```
 
-The Kinto bot reads the configuration from environment variables. You can use a shell
-script to set them:
+The bot needs to know the BotFather token, a user:password of your choice (any),
+and a collection name that will be used by the Web page to filter messages of your party :)
+
+The configuration is read from environment variables. You can use a shell script to set them:
 
 ```shell
 # config.env
 export TOKEN=the-token-the-botfather-gave
-export SERVER_URL=https://kinto.yourdomain.com/v1
 export SERVER_AUTH=botuser:some-secret-password-of-your-choice
 export COLLECTION=myparty
+```
+
+If you run your own *Kinto* server, add:
+
+```shell
+export SERVER_URL=https://kinto.yourdomain.com/v1
 ```
 
 And then run it:
