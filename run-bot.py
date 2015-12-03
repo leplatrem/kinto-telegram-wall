@@ -96,9 +96,10 @@ def handle(msg):
     # Attributes sent to Kinto.
     record = {"date": msg["date"],
               "from": {"first_name": msg["from"]["first_name"]}}
-    record[msg_type] = content = msg[msg_type]
+    content = msg[msg_type]
 
     if msg_type not in DOWNLOAD_TYPES:
+        record[msg_type] = content
         kinto_create_record(record)
     else:
         if msg_type == "photo":
