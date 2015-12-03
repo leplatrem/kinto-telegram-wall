@@ -42,8 +42,13 @@ function main() {
     contents = newrecords.concat(contents);
     queue = newrecords.concat(queue);
   });
+  channel.bind('delete', function(data) {
+    var deletedIds = data.map(function (change) { return change.old.id; });
+    contents = contents.filter(function (record) { return deletedIds.indexOf(record.id) < 0; });
+    queue = queue.filter(function (record) { return deletedIds.indexOf(record.id) < 0; });
+  });
 
-
+  // Render HTML.
   function showContent(record) {
     var entry;
     var isURL = /^http(.*)(gif|jpg|jpeg)$/.test(record.text);
