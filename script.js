@@ -24,8 +24,10 @@ function main() {
      return response.json();
    })
    .then(function (result) {
-     contents = result.data;
-     showContent(contents[0]);
+     if (result.data) {
+       contents = result.data;
+       showContent(contents[0]);
+     }
    })
    .catch(function (error) {
      document.getElementById("error").textContent = error.toString();
@@ -39,8 +41,12 @@ function main() {
   var channel = pusher.subscribe(channelName);
   channel.bind('create', function(data) {
     var newrecords = data.map(function (change) { return change.new; });
+    var wasEmpty = contents.length === 0;
     contents = newrecords.concat(contents);
     queue = newrecords.concat(queue);
+    if (wasEmpty) {
+       showContent(contents[0]);
+    }
   });
   channel.bind('delete', function(data) {
     var deletedIds = data.map(function (change) { return change.old.id; });
