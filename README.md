@@ -103,6 +103,7 @@ The configuration is read from environment variables. You can use a shell script
 export TOKEN=the-token-the-botfather-gave
 export SERVER_AUTH=botuser:some-secret-password-of-your-choice
 export COLLECTION=myparty
+export DOWNLOAD_MAX_SIZE=5000000
 ```
 
 If you run your own *Kinto* server, add:

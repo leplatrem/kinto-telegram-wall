@@ -17,6 +17,7 @@ SERVER_AUTH = os.getenv("SERVER_AUTH", "botuser:secret")
 BUCKET = os.getenv("BUCKET", "kintobot")
 COLLECTION = os.getenv("COLLECTION", "wall")
 DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH", ".")
+DOWNLOAD_MAX_SIZE = int(os.getenv("DOWNLOAD_MAX_SIZE", 5 * 1000 * 1000))
 CONTACT_SUPPORT = os.getenv("CONTACT_SUPPORT", "@leplatrem")
 
 DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
@@ -47,11 +48,19 @@ def kinto_init():
 
 
 def kinto_create_record(record):
+    # Since demo server is flushed every morning, recreate bucket/collection!
+    if SERVER_URL == DEMO_SERVER_URL:
+        kinto_init()
+
     kinto.create_record(data=record, permissions=RECORD_PERMISSIONS,
                         collection=COLLECTION, bucket=BUCKET)
 
 
 def kinto_create_attachment(record, tmpfile, filename, mimetype):
+    # Since demo server is flushed every morning, recreate bucket/collection!
+    if SERVER_URL == DEMO_SERVER_URL:
+        kinto_init()
+
     record_id = str(uuid.uuid4())
     endpoint = kinto.endpoints.get("record", id=record_id, bucket=BUCKET, collection=COLLECTION)
     endpoint += "/attachment"
@@ -63,9 +72,8 @@ def kinto_create_attachment(record, tmpfile, filename, mimetype):
     pprint.pprint(response.json())
 
 
-def download_from_telegram(chat_id, attachment):
+def download_from_telegram(attachment):
     file_id = attachment["file_id"]
-
     filename = attachment.get("file_name")
     if not filename:
         filepath = attachment.get("file_path")
@@ -104,10 +112,6 @@ def handle(msg):
         bot.sendMessage(chat_id, welcome)
         return
 
-    # Since demo server is flushed every morning, recreate bucket/collection!
-    if SERVER_URL == DEMO_SERVER_URL:
-        kinto_init()
-
     # Attributes sent to Kinto.
     record = {"date": msg["date"],
               "from": {"first_name": msg["from"]["first_name"]}}
@@ -122,7 +126,12 @@ def handle(msg):
             if msg_type == "photo":
                 content = content[-1]
 
-            tmpfile, filename, mimetype = download_from_telegram(chat_id, content)
+            filesize = content.get("file_size")
+            if filesize > DOWNLOAD_MAX_SIZE:
+                bot.sendMessage(chat_id, "File is too big!")
+                return
+
+            tmpfile, filename, mimetype = download_from_telegram(content)
             kinto_create_attachment(record, tmpfile, filename, mimetype)
         bot.sendMessage(chat_id, THUMB_UP)
     except Exception as e:
