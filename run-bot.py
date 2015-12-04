@@ -27,8 +27,8 @@ DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
 BUCKET_PERMISSIONS = {"collection:create": ["system.Authenticated"]}
 COLLECTION_PERMISSIONS = {"record:create": ["system.Authenticated"]}
 RECORD_PERMISSIONS = {"read": ["system.Everyone"]}
-COMMAND_MP4_TO_WEBM = os.getenv("COMMAND_WEBP_TO_PNG", 'ffmpeg -i "{src}" "{dest}"')
-COMMAND_WEBP_TO_PNG = COMMAND_MP4_TO_WEBM  # ffmpeg rocks.
+COMMAND_MP4_TO_WEBM = os.getenv("COMMAND_MP4_TO_WEBM", 'ffmpeg -i "{src}" "{dest}"')
+COMMAND_WEBP_TO_PNG = os.getenv("COMMAND_WEBP_TO_PNG", COMMAND_MP4_TO_WEBM)  # Recent ffmpeg rocks.
 THUMB_UP = u'\U0001f44d'
 
 
@@ -167,6 +167,7 @@ def handle(msg):
                 return
 
             tmpfile, filename, mimetype = download_from_telegram(content)
+            print((tmpfile, filename, mimetype))
             kinto_create_attachment(record, tmpfile, filename, mimetype)
         bot.sendMessage(chat_id, THUMB_UP)
     except Exception as e:
