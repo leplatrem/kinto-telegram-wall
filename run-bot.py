@@ -10,9 +10,10 @@ import requests
 import telepot
 
 
-DEMO_SERVER_URL = "https://kinto.dev.mozaws.net/v1"
 TOKEN = os.getenv("TOKEN")
-SERVER_URL = os.getenv("SERVER_URL", DEMO_SERVER_URL)
+WALL_URL = os.getenv("WALL_URL", "http://leplatrem.github.io/kinto-telegram-wall/")
+MOZILLA_DEMO_SERVER = "https://kinto.dev.mozaws.net/v1"
+SERVER_URL = os.getenv("SERVER_URL", MOZILLA_DEMO_SERVER)
 SERVER_AUTH = os.getenv("SERVER_AUTH", "botuser:secret")
 BUCKET = os.getenv("BUCKET", "kintobot")
 COLLECTION = os.getenv("COLLECTION", "wall")
@@ -49,7 +50,7 @@ def kinto_init():
 
 def kinto_create_record(record):
     # Since demo server is flushed every morning, recreate bucket/collection!
-    if SERVER_URL == DEMO_SERVER_URL:
+    if SERVER_URL == MOZILLA_DEMO_SERVER:
         kinto_init()
 
     kinto.create_record(data=record, permissions=RECORD_PERMISSIONS,
@@ -58,7 +59,7 @@ def kinto_create_record(record):
 
 def kinto_create_attachment(record, tmpfile, filename, mimetype):
     # Since demo server is flushed every morning, recreate bucket/collection!
-    if SERVER_URL == DEMO_SERVER_URL:
+    if SERVER_URL == MOZILLA_DEMO_SERVER:
         kinto_init()
 
     record_id = str(uuid.uuid4())
@@ -106,9 +107,11 @@ def handle(msg):
     if msg.get("text", "").startswith("/"):
         welcome = (
             "Hello!\n"
+            "Any message, picture, sound, video sent to me will be displayed "
+            "live on {wall_url}\n"
             "This project is open source!\n"
             "Check out https://github.com/leplatrem/kinto-telegram-wall#readme"
-        )
+        ).format(wall_url=WALL_URL)
         bot.sendMessage(chat_id, welcome)
         return
 
