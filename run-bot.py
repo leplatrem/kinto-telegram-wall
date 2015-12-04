@@ -1,6 +1,8 @@
 import json
 import mimetypes
 import os
+import shlex
+import subprocess
 import uuid
 import time
 import pprint
@@ -25,6 +27,8 @@ DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
 BUCKET_PERMISSIONS = {"collection:create": ["system.Authenticated"]}
 COLLECTION_PERMISSIONS = {"record:create": ["system.Authenticated"]}
 RECORD_PERMISSIONS = {"read": ["system.Everyone"]}
+COMMAND_MP4_TO_WEBM = os.getenv("COMMAND_WEBP_TO_PNG", 'ffmpeg -i "{src}" "{dest}"')
+COMMAND_WEBP_TO_PNG = COMMAND_MP4_TO_WEBM  # ffmpeg rocks.
 THUMB_UP = u'\U0001f44d'
 
 
@@ -95,6 +99,34 @@ def download_from_telegram(attachment):
     destination = os.path.join(DOWNLOAD_PATH, file_id) + (extension or '')
     bot.downloadFile(file_id, destination)
     print("Downloaded %s" % destination)
+
+    # Transcode WebP if possible.
+    if extension == '.webp':
+        try:
+            newdestination = destination.replace('.webp', '.png')
+            command = COMMAND_WEBP_TO_PNG.format(src=destination, dest=newdestination)
+            subprocess.check_call(shlex.split(command))
+            os.remove(destination)
+            print("'%s' successfull" % command)
+            destination = newdestination
+            filename = os.path.basename(destination)
+            mimetype = 'image/png'
+        except Exception as e:
+            print("'%s' failed: %s" % (command, e))
+
+    # Transcode 3gpp if possible.
+    if extension == '.mp4':
+        try:
+            newdestination = destination.replace('.mp4', '.webm')
+            command = COMMAND_MP4_TO_WEBM.format(src=destination, dest=newdestination)
+            subprocess.check_call(shlex.split(command))
+            print("'%s' successfull" % command)
+            os.remove(destination)
+            destination = newdestination
+            filename = os.path.basename(destination)
+            mimetype = 'video/webm'
+        except Exception as e:
+            print("'%s' failed: %s" % (command, e))
 
     return (destination, filename, mimetype)
 
