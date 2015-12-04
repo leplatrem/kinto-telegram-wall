@@ -18,9 +18,8 @@ COLLECTION = os.getenv("COLLECTION", "wall")
 DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH", ".")
 
 DOWNLOAD_TYPES = ("voice", "sticker", "photo", "audio", "document", "video")
-BUCKET_PERMISSIONS = {"read": ["system.Everyone"],
-                      "collection:create": ["system.Authenticated"]}
-RECORD_PERMISSIONS = {}
+BUCKET_PERMISSIONS = {"collection:create": ["system.Authenticated"]}
+RECORD_PERMISSIONS = {"read": ["system.Everyone"]}
 THUMB_UP = u'\U0001f44d'
 
 
@@ -31,13 +30,17 @@ mimetypes.add_type("image/webp", ".webp")
 
 def kinto_init():
     try:
-        kinto.get_bucket(BUCKET)
-    except kinto_exceptions.BucketNotFound:
         kinto.create_bucket(BUCKET, permissions=BUCKET_PERMISSIONS)
+    except kinto_exceptions.KintoException as e:
+        if e.response.status_code != 412:
+            raise e
+        print("Bucket '%s' already exists." % BUCKET)
     try:
-        kinto.get_collection(COLLECTION, bucket=BUCKET)
-    except kinto_exceptions.KintoException:
         kinto.create_collection(COLLECTION, bucket=BUCKET)
+    except kinto_exceptions.KintoException as e:
+        if e.response.status_code != 412:
+            raise e
+        print("Collection '%s' already exists." % COLLECTION)
 
 
 def kinto_create_record(record):
@@ -118,7 +121,7 @@ def handle(msg):
 
 if __name__ == "__main__":
     auth = tuple(SERVER_AUTH.split(":"))
-    print("Connect to %s with user %s" % (SERVER_URL, auth[0]))
+    print("Connect to %s with user '%s'." % (SERVER_URL, auth[0]))
     kinto = Kinto(server_url=SERVER_URL, auth=auth)
     kinto_init()
 
