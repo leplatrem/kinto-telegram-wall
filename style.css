@@ -56,10 +56,19 @@ body {
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
   background: rgba(0, 0, 0, 0.8);
+  font-size: 0.6em;
 }
 
+  #instructions a {
+    color: #eaeaea;
+  }
+
+  #instructions small {
+    font-size: 0.8em;
+  }
+
   #instructions strong, #instructions em {
-    font-size: 1.2em;
+    font-size: 1em;
     color: white;
   }
 
