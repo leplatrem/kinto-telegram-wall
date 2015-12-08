@@ -50,18 +50,11 @@ a {
     color: rgba(255, 255, 255, 0.8);
   }
 
-#links {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(0, 0, 0, 0.8);
-  font-size: 0.4em;
-}
 
-
-#instructions {
+#infos {
   position: fixed;
+  align-items: baseline;
+
   bottom: 0;
   left: 0;
   right: 0;
@@ -71,10 +64,12 @@ a {
   font-size: 0.6em;
 }
 
-
   #instructions strong, #instructions em {
-    font-size: 1em;
     color: white;
+  }
+
+  #links {
+    font-size: 0.6em;
   }
 
 
