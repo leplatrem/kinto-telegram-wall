@@ -54,6 +54,18 @@ function main() {
     queue = queue.filter(function (record) { return deletedIds.indexOf(record.id) < 0; });
   });
 
+  // Preload media
+  function preload(record) {
+    var isURL = /^http(.*)(gif|jpg|jpeg)$/.test(record.text);
+    if (isURL || record.attachment) {
+      var location = isURL ? record.text : record.attachment.location;
+      if (isURL || /^image/.test(record.attachment.mimetype)) {
+        var image = new Image();
+        image.src = location;
+      }
+    }
+  }
+
   // Render HTML.
   function showContent(record) {
     var entry;
@@ -100,6 +112,9 @@ function main() {
     if (queue.length === 0) {
       queue = contents;
     }
+
+    // Preload next record
+    preload(record);
 
     // Auto-refresh.
     setTimeout(showContent.bind(undefined, record), refreshRate);
