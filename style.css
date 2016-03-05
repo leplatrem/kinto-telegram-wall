@@ -52,6 +52,25 @@ a {
     color: rgba(255, 255, 255, 0.8);
   }
 
+#progress {
+       height: 5px;
+       background: #acbad5;
+       top: 0;
+       left: 0;
+       position: absolute;
+
+    width:0%;
+    overflow:hidden;
+    -webkit-transition: width 7s linear;
+    -moz-transition: width 7s linear;
+    -o-transition: width 7s linear;
+    transition: width 7s linear;
+}
+
+#progress.run {
+       width: 100%;
+}
+
 
 #infos {
   position: fixed;
