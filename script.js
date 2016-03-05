@@ -26,6 +26,7 @@ function main() {
    .then(function (result) {
      if (result.data) {
        contents = result.data;
+       queue = contents.slice(1);
        showContent(contents[0]);
      }
    })
@@ -46,6 +47,7 @@ function main() {
     queue = newrecords.concat(queue);
     if (wasEmpty) {
        showContent(contents[0]);
+       queue = queue.slice(1);
     }
   });
   channel.bind('delete', function(data) {
