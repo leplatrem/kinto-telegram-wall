@@ -12,7 +12,7 @@ function main() {
   // Max initial number of records
   var limit = 100;
   // Refresh rate
-  var refreshRate = 10000;
+  var refreshRate = 7000;
 
   var contents = [];
   var queue = [];
@@ -103,6 +103,9 @@ function main() {
 
     // Auto-refresh.
     setTimeout(showContent.bind(undefined, record), refreshRate);
+
+    // Toggle progress bar.
+    document.querySelector("#progress").classList.toggle('run');
   }
 }
 
